@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050505;
+        --card: #111;
+        --card-alt: #181818;
+        --border: #2f2f2f;
+        --primary: #00d4ff;
+        --accent: #ff7a18;
+        --text: #f4f4f4;
+        --muted: #b5b5b5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #0f0f0f, var(--bg));
+        font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--text);
+      }
+
+      header {
+        padding: 48px 24px 12px;
+        text-align: center;
+      }
+
+      header h1 {
+        margin: 0 auto 12px;
+        max-width: 900px;
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        font-weight: 600;
+        line-height: 1.2;
+      }
+
+      header p {
+        margin: 0 auto;
+        max-width: 720px;
+        color: var(--muted);
+      }
+
+      main {
+        width: min(1200px, 94vw);
+        margin: 20px auto 64px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+      }
+
+      .card {
+        background: linear-gradient(145deg, var(--card), var(--card-alt));
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      .card h2 {
+        margin: 0 0 18px;
+        font-size: 1.3rem;
+        font-weight: 500;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 18px;
+      }
+
+      .metric {
+        padding: 18px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+      }
+
+      .metric strong {
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      form {
+        display: grid;
+        gap: 16px;
+      }
+
+      label {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+        display: inline-block;
+      }
+
+      select,
+      input {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--text);
+        font-size: 1rem;
+        transition: border 0.2s ease, transform 0.2s ease;
+      }
+
+      select:focus,
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        transform: translateY(-1px);
+      }
+
+      button {
+        margin-top: 8px;
+        padding: 14px 18px;
+        border-radius: 14px;
+        border: none;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #050505;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 18px 30px rgba(0, 212, 255, 0.2);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      button:hover {
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 20px 30px rgba(0, 212, 255, 0.25);
+      }
+
+      .prediction {
+        text-align: center;
+        padding: 24px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(0, 212, 255, 0.08);
+      }
+
+      .prediction p {
+        margin: 6px 0;
+      }
+
+      .prediction strong {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .error {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 0, 72, 0.4);
+        background: rgba(255, 0, 72, 0.12);
+        color: #ff8ea6;
+        font-size: 0.95rem;
+      }
+
+      .list {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+      }
+
+      .list li {
+        margin-bottom: 6px;
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding-top: 36px;
+        }
+
+        main {
+          grid-template-columns: 1fr;
+          width: min(640px, 92vw);
+        }
+
+        .card {
+          padding: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>{{ title }}</h1>
+      <p>
+        Masukkan statistik utama film untuk memprediksi pendapatan box office
+        global. Model Random Forest ini dilatih menggunakan data
+        {{ summary.total_movies }} film sehingga hasil tetap informatif dan
+        konsisten.
+      </p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Gambaran Data</h2>
+        <div class="metrics">
+          <div class="metric">
+            <span>Rata-rata Pendapatan Global</span>
+            <strong>{{ summary.avg_worldwide|currency }}</strong>
+          </div>
+          <div class="metric">
+            <span>Median Anggaran Produksi</span>
+            <strong>{{ summary.median_budget|currency }}</strong>
+          </div>
+          <div class="metric">
+            <span>Rata-rata Skor Penonton</span>
+            <strong>{{ summary.avg_rating|round(2) }}</strong>
+          </div>
+          <div class="metric">
+            <span>Durasi Rata-rata</span>
+            <strong>{{ summary.avg_runtime|round(0) }} mnt</strong>
+          </div>
+        </div>
+        <h3>Genre Terpopuler</h3>
+        <ul class="list">
+          {% for genre in summary.top_genres %}
+          <li>{{ genre.name }} &mdash; {{ genre.count }} film</li>
+          {% endfor %}
+        </ul>
+        <h3>3 Film Berpendapatan Tertinggi</h3>
+        <ul class="list">
+          {% for movie in summary.top_movies %}
+          <li>
+            <strong>{{ movie.movie_title }}</strong> • {{ movie.genres }} •
+            {{ movie['Worldwide gross $']|currency }}
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Masukkan Statistik Film</h2>
+        <form method="POST">
+          <div>
+            <label for="genres">Genre</label>
+            <select id="genres" name="genres" required>
+              <option value="" disabled {{ '' == form_data.genres and 'selected' }}>
+                Pilih kombinasi genre
+              </option>
+              {% for option in genres_options %}
+              <option
+                value="{{ option }}"
+                {{ 'selected' if option == form_data.genres }}
+              >
+                {{ option }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label for="runtime_minutes">Durasi (menit)</label>
+            <input
+              type="number"
+              id="runtime_minutes"
+              name="runtime_minutes"
+              min="60"
+              max="240"
+              step="1"
+              value="{{ form_data['runtime_minutes'] }}"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="movie_averageRating">Skor rata-rata penonton (1-10)</label>
+            <input
+              type="number"
+              id="movie_averageRating"
+              name="movie_averageRating"
+              min="1"
+              max="10"
+              step="0.1"
+              value="{{ form_data['movie_averageRating'] }}"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="movie_numerOfVotes">Jumlah suara pengguna</label>
+            <input
+              type="number"
+              id="movie_numerOfVotes"
+              name="movie_numerOfVotes"
+              min="1000"
+              step="100"
+              value="{{ form_data['movie_numerOfVotes'] }}"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="approval_Index">Indeks persetujuan (0-10)</label>
+            <input
+              type="number"
+              id="approval_Index"
+              name="approval_Index"
+              min="0"
+              max="10"
+              step="0.01"
+              value="{{ form_data['approval_Index'] }}"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="Production budget $">Anggaran produksi (USD)</label>
+            <input
+              type="number"
+              id="Production budget $"
+              name="Production budget $"
+              min="1000000"
+              step="100000"
+              value="{{ form_data['Production budget $'] }}"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="Domestic gross $">Pendapatan domestik (USD)</label>
+            <input
+              type="number"
+              id="Domestic gross $"
+              name="Domestic gross $"
+              min="1000000"
+              step="100000"
+              value="{{ form_data['Domestic gross $'] }}"
+              required
+            />
+          </div>
+
+          <button type="submit">Prediksi Pendapatan Dunia</button>
+
+          {% if error %}
+          <div class="error">{{ error }}</div>
+          {% endif %}
+        </form>
+
+        {% if prediction %}
+        <div class="prediction">
+          <p>Estimasi Pendapatan Dunia</p>
+          <strong>{{ prediction }}</strong>
+          <p>Model Random Forest akan menampilkan nilai terbaik berdasarkan input Anda.</p>
+        </div>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>
+
